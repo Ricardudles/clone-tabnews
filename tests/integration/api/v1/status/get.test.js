@@ -1,3 +1,9 @@
+import orchestrator from "tests/orchestrator.js";
+
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
+});
+
 var baseUrl = "http://localhost:3000";
 
 test("Get to /api/v1/status should return 200", async () => {

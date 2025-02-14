@@ -1,7 +1,12 @@
 import database from "infra/database.js";
-var baseUrl = "http://localhost:3000";
+import orchestrator from "tests/orchestrator.js";
 
-beforeAll(cleanDatabase);
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
+  await cleanDatabase();
+});
+
+var baseUrl = "http://localhost:3000";
 
 async function cleanDatabase() {
   await database.query("DROP schema public CASCADE; create schema public;");
@@ -16,8 +21,6 @@ test("2 Posts to /api/v1/migrations should return 201 and 200", async () => {
 
   const response1Body = await response1.json();
 
-  console.log(response1Body);
-
   expect(Array.isArray(response1Body)).toBe(true);
   expect(response1Body.length).toBeGreaterThan(0);
 
@@ -27,8 +30,6 @@ test("2 Posts to /api/v1/migrations should return 201 and 200", async () => {
   expect(response2.status).toBe(200);
 
   const response2Body = await response2.json();
-
-  console.log(response2Body);
 
   expect(Array.isArray(response2Body)).toBe(true);
   expect(response2Body.length).toBe(0);

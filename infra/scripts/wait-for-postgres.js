@@ -12,7 +12,7 @@ function checkPostgres() {
       process.stdout.write(
         `\r${hourglass[counter % hourglass.length]}  ${
           mementoMori[counter % mementoMori.length]
-        }  Awaiting Postgres warmup...`
+        }  Awaiting Postgres warmup...`,
       );
       counter++;
 
@@ -23,7 +23,7 @@ function checkPostgres() {
     console.log(
       `\r${hourglass[counter % hourglass.length]}  ${
         mementoMori[counter % mementoMori.length]
-      }  Postgres accepting new connections!`
+      }  Postgres accepting new connections!`,
     );
   }
 }

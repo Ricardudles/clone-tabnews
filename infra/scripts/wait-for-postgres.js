@@ -7,23 +7,23 @@ let hourglass = ["⏳", "⌛", "⏳", "⌛", "⏳", "⌛"];
 function checkPostgres() {
   exec("docker exec postgres-dev pg_isready --host localhost", handleReturn);
 
-  function handleReturn(stdout) {
+  function handleReturn(error, stdout) {
     if (stdout.search("accepting connections") === -1) {
       process.stdout.write(
         `\r${hourglass[counter % hourglass.length]}  ${
           mementoMori[counter % mementoMori.length]
-        }  Awaiting Postgres warmup...`
+        }  Awaiting Postgres warmup...`,
       );
       counter++;
 
-      setTimeout(checkPostgres, 250);
+      checkPostgres();
       return;
     }
 
     console.log(
       `\r${hourglass[counter % hourglass.length]}  ${
         mementoMori[counter % mementoMori.length]
-      }  Postgres accepting new connections!`
+      }  Postgres accepting new connections!`,
     );
   }
 }

@@ -7,10 +7,10 @@ async function status(request, response) {
   const postgresVersion = queryPostgresVersion.rows[0].server_version;
 
   const queryPostgresMaxConnections = await database.query(
-    "SHOW max_connections;"
+    "SHOW max_connections;",
   );
   const postgresMaxConnections = parseInt(
-    queryPostgresMaxConnections.rows[0].max_connections
+    queryPostgresMaxConnections.rows[0].max_connections,
   );
 
   const databaseName = process.env.POSTGRES_DB;
@@ -19,7 +19,7 @@ async function status(request, response) {
     values: [databaseName],
   });
   const postgresOpenedConnections = parseInt(
-    queryPostgresOpenedConnections.rows[0].count
+    queryPostgresOpenedConnections.rows[0].count,
   );
 
   const reponseBody = {

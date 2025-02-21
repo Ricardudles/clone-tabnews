@@ -7,7 +7,7 @@ let hourglass = ["⏳", "⌛", "⏳", "⌛", "⏳", "⌛"];
 function checkPostgres() {
   exec("docker exec postgres-dev pg_isready --host localhost", handleReturn);
 
-  function handleReturn(stdout) {
+  function handleReturn(error, stdout) {
     if (stdout.search("accepting connections") === -1) {
       process.stdout.write(
         `\r${hourglass[counter % hourglass.length]}  ${
@@ -16,7 +16,7 @@ function checkPostgres() {
       );
       counter++;
 
-      setTimeout(checkPostgres, 250);
+      checkPostgres();
       return;
     }
 

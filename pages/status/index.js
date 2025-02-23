@@ -17,8 +17,7 @@ export default function StatusPage() {
 
 function UpdatedStatus() {
   const { isLoading, data } = useSWR("/api/v1/status", FetchApi, {
-    refreshInterval: 1000,
-    dedupingInterval: 1000,
+    refreshInterval: 5000,
   });
   let updatedAtText = "Carregando...";
 

@@ -1,34 +1,41 @@
 import migrationRunner from "node-pg-migrate";
 import { resolve } from "node:path";
 import database from "infra/database";
+import { createRouter } from "next-connect";
+import controller from "infra/controller.js";
 
-export default async function migrations(request, response) {
-  if (!["POST", "GET"].includes(request.method)) {
-    return response.status(405).end();
-  }
+const router = createRouter();
+router.get(getHandler).post(postHandler);
 
+export default router.handler(controller.errorHandlers);
+
+async function getHandler(request, response) {
+  const migrations = await runMigrations(request.method);
+  return response.status(200).json(migrations);
+}
+
+async function postHandler(request, response) {
+  const migrations = await runMigrations(request.method);
+
+  return migrations.length > 0
+    ? response.status(201).json(migrations)
+    : response.status(200).json(migrations);
+}
+
+async function runMigrations(requestMethod) {
   let dbClient;
   try {
     dbClient = await database.getNewClient();
 
     const migrations = await migrationRunner({
       dbClient: dbClient,
-      dryRun: request.method === "GET",
+      dryRun: requestMethod === "GET",
       dir: resolve("infra", "migrations"),
       direction: "up",
       verbose: true,
       migrationsTable: "pgmigrations",
     });
-
-    if (request.method !== "POST") {
-      return response.status(200).json(migrations);
-    }
-
-    return migrations.length > 0
-      ? response.status(201).json(migrations)
-      : response.status(200).json(migrations);
-  } catch (error) {
-    return response.status(500).json({ error: error.message });
+    return migrations;
   } finally {
     await dbClient.end();
   }
